@@ -112,7 +112,3 @@ for pair in range(0,(len(choosed_parents_pi)), 2):
     offsprings_generation.append(O1)
     offsprings_generation.append(O2)
 
-print(list(offsprings_generation[1]))
-print(len(offsprings_generation))
-print("")
-print(type(list(offsprings_generation[1])))
