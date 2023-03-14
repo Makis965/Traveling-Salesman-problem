@@ -95,6 +95,7 @@ def crossover_f(A1, A2, N):
               O1[indexA2] = A1[indexA2]
             else:
               break
+
     for id in range(N):
          if np.isnan(O1[id]):
             O1[id] = A2[id]
@@ -104,6 +105,7 @@ def crossover_f(A1, A2, N):
 # generate offsprings for each ancestor's pair
 
 offsprings_generation  = []
+
 for pair in range(0,(len(choosed_parents_pi)), 2):
     A1 = choosed_parents_pi[pair]
     A2 = choosed_parents_pi[pair+1]
@@ -112,3 +114,19 @@ for pair in range(0,(len(choosed_parents_pi)), 2):
     offsprings_generation.append(O1)
     offsprings_generation.append(O2)
 
+# # # mutation operator
+
+mutation_prop = random.random()
+mutated_offsprings_generation = []
+
+for offspr in offsprings_generation:
+    if mutation_prop > pm:
+        allel1 = random.randrange(1, N)
+        allel2 = random.randrange(1, N)
+        print("przed mutacja: ", offspr)
+        offspr_out = offspr
+        offspr_out[allel1] , offspr_out[allel2] = offspr_out[allel2], offspr_out[allel1]
+        print("allel1 :", allel1)
+        print("allel2 :", allel2)
+        print("po mutacji:    ", offspr_out)
+        print("")
