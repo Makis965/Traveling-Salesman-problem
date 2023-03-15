@@ -2,131 +2,144 @@ import random
 import numpy as np
 import pandas as pan
 
-random.seed(100)
-np.random.seed(100)
-
 N = 10  # cities number
-P = 250  # permutations amount
+P = 50  # permutations amount
 n = 0.8
 pm = 0.2
 Tmax = 1000
 
-# # #create population of P chromosomes => population of possible pi tours.
-
-cities = list(np.arange(0, N, 1))
-population = list()
-
-for i in range(P):
-    tour = random.sample(cities, N)
-    population.append(tour)
-
-# # # define diagonal identity matrix: distances between each individual (chromosomes)
-
-# define coordinates x and y for each city
-
-x_coords = np.random.rand(1, 10)
-y_coords = np.random.rand(1, 10)
-coords = np.concatenate((x_coords, y_coords))  # merge coords
-
-# define distances matrix
-
-distance_matrix = np.zeros((N, N))
-
-for i in range(10):
-    for k in range(10):
-        distance_matrix[i, k] = (coords[0, i] - coords[0, k]) ** 2 + (coords[1, i] - coords[1, k]) ** 2
-
-# # # define cost function
-
-distance_matrix = pan.DataFrame(distance_matrix)
-
-
+# Creating
 def cost_f(data_frame, tour):
     cost_sum = 0
     for j in range(len(tour)):
         if j < 9:
-            cost_sum = cost_sum + distance_matrix[tour[j]][tour[j + 1]]
+            cost_sum = cost_sum + data_frame[tour[j]][tour[j + 1]]
         else:
-            cost_sum = cost_sum + distance_matrix[tour[0]][tour[-1]]
+            cost_sum = cost_sum + data_frame[tour[0]][tour[-1]]
     return cost_sum
 
-# # # define selection operator
 
-list_of_costs = []
-
-for P_index in range(P):
-    list_of_costs.append(cost_f(distance_matrix, population[P_index]))
-
-m_f = max(list_of_costs)
-t_i = m_f - list_of_costs
-t_s = sum(m_f - list_of_costs)
-
-element = 0
-choosed_parents = []
-choosed_parents_pi = []
-
-for r in range(200):
-    r_value = random.uniform(0, t_s)
-    ti_sum = 0
-    for i in range(len(t_i)):
-        ti_sum = ti_sum + t_i[i]
-        if ti_sum > r_value:
-            # choosed_parents.append(i)
-            # index = choosed_parents.index(i)
-            choosed_parents_pi.append(population[i])
-            break
+def Travelsalesman (N,P,n,pm,Tmax):
+    random.seed(100)
+    np.random.seed(100)
 
 
-# # # Crossover operation:
+    # # #create population of P chromosomes => population of possible pi tours.
 
-# define crossover function
+    cities = list(np.arange(0, N, 1))
+    population = list()
 
-def crossover_f(A1, A2, N):
-    O1 = np.empty(N)
-    O1[:] = np.NaN
-    for i in range(N):
-        if i == 0:
-            O1[0] = A1[0]
-            indexA2 = A2.index(A1[0])
-            O1[indexA2] = A1[indexA2]
-        else:
-            indexA2 = A2.index(A1[indexA2])
-            if np.isnan(O1[indexA2]):
-              O1[indexA2] = A1[indexA2]
+    for i in range(P):
+        tour = random.sample(cities, N)
+        population.append(tour)
+
+    # # # define diagonal identity matrix: distances between each individual (chromosomes)
+
+    # define coordinates x and y for each city - ZMIENIĆ NA TE OD CZABANA
+
+    x_coords = np.random.rand(1, 10)
+    y_coords = np.random.rand(1, 10)
+    coords = np.concatenate((x_coords, y_coords))  # merge coords
+
+    # define distances matrix
+
+    distance_matrix = np.zeros((N, N))
+
+    for i in range(10):
+        for k in range(10):
+            distance_matrix[i, k] = (coords[0, i] - coords[0, k]) ** 2 + (coords[1, i] - coords[1, k]) ** 2
+
+    distance_matrix = pan.DataFrame(distance_matrix)
+
+    # # # define selection operator
+    for i in range(Tmax):
+        list_of_costs = []
+
+        for P_index in range(P):
+            list_of_costs.append(cost_f(distance_matrix, population[P_index]))
+
+        m_f = max(list_of_costs)
+        t_i = m_f - list_of_costs
+        t_s = sum(m_f - list_of_costs)
+
+        element = 0
+        choosed_parents = []
+        choosed_parents_pi = []
+        parents = int(n*P)
+        for r in range(parents):
+            r_value = random.uniform(0, t_s)
+            ti_sum = 0
+            for i in range(len(t_i)):
+                ti_sum = ti_sum + t_i[i]
+                if ti_sum > r_value:
+                    choosed_parents_pi.append(population[i])
+                    break
+
+        # # # Crossover operation:
+
+        # define crossover function
+
+        def crossover_f(A1, A2, N):
+            O1 = np.empty(N)
+            O1[:] = np.NaN
+            for i in range(N):
+                if i == 0:
+                    O1[0] = A1[0]
+                    indexA2 = A2.index(A1[0])
+                    O1[indexA2] = int(A1[indexA2])
+                else:
+                    indexA2 = A2.index(A1[indexA2])
+                    if np.isnan(O1[indexA2]):
+                        O1[indexA2] = int(A1[indexA2])
+                    else:
+                        break
+
+            for id in range(N):
+                if np.isnan(O1[id]):
+                    O1[id] = A2[id]
+
+            return O1
+
+        # generate offsprings for each ancestor's pair
+
+        offsprings_generation  = []
+
+        for pair in range(0,(len(choosed_parents_pi)), 2):
+            A1 = choosed_parents_pi[pair]
+            A2 = choosed_parents_pi[pair+1]
+            O1 = crossover_f(A1,A2,10)
+            O2 = crossover_f(A2,A1,10)
+            offsprings_generation.append(O1)
+            offsprings_generation.append(O2)
+
+        # # # mutation operator
+
+        mutated_offsprings_generation = []
+        for offspr in offsprings_generation:
+            mutation_prop = random.random()
+            if mutation_prop > pm:
+                allel1 = random.randrange(1, N)
+                allel2 = random.randrange(1, N)
+                offspr_out = offspr
+                offspr_out[allel1] , offspr_out[allel2] = offspr_out[allel2], offspr_out[allel1]
+                mutated_offsprings_generation.append(offspr_out)
             else:
-              break
+                mutated_offsprings_generation.append(offspr)
 
-    for id in range(N):
-         if np.isnan(O1[id]):
-            O1[id] = A2[id]
+        # # selecting new population
+        fresh_pool = population + mutated_offsprings_generation
+        fresh_cost = []
+        for el in range(len(fresh_pool)):
+            fresh_cost.append(cost_f(distance_matrix, fresh_pool[el]))
 
-    return O1
+        fresh_population = pan.DataFrame(zip(fresh_pool, fresh_cost))
+        fresh_population = fresh_population.sort_values(by=1).head(P)
 
-# generate offsprings for each ancestor's pair
+    return fresh_population[0].iat[0]
 
-offsprings_generation  = []
+import time
+tik = time.time()
+best_tour = Travelsalesman(N,P,n,pm,Tmax)
+tak = time.time() - tik
 
-for pair in range(0,(len(choosed_parents_pi)), 2):
-    A1 = choosed_parents_pi[pair]
-    A2 = choosed_parents_pi[pair+1]
-    O1 = crossover_f(A1,A2,10)
-    O2 = crossover_f(A2,A1,10)
-    offsprings_generation.append(O1)
-    offsprings_generation.append(O2)
-
-# # # mutation operator
-
-mutation_prop = random.random()
-mutated_offsprings_generation = []
-
-for offspr in offsprings_generation:
-    if mutation_prop > pm:
-        allel1 = random.randrange(1, N)
-        allel2 = random.randrange(1, N)
-        print("przed mutacja: ", offspr)
-        offspr_out = offspr
-        offspr_out[allel1] , offspr_out[allel2] = offspr_out[allel2], offspr_out[allel1]
-        print("allel1 :", allel1)
-        print("allel2 :", allel2)
-        print("po mutacji:    ", offspr_out)
-        print("")
+print(tak)
