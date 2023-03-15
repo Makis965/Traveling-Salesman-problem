@@ -144,7 +144,7 @@ def Travelsalesman (N,P,n,pm,Tmax, x_coords = [], y_coords = []):
         for el in range(len(fresh_pool)):
             fresh_cost.append(cost_f(distance_matrix, fresh_pool[el]))
 
-        # # # selecting new N individuals to population 
+        # # # selecting new N individuals to population
 
         fresh_population = pan.DataFrame(zip(fresh_pool, fresh_cost))
         fresh_population_sorted = fresh_population.sort_values(by=1).head(P)
@@ -162,3 +162,8 @@ best_tour  = Travelsalesman(N,P,n,pm,Tmax, x_coords, y_coords)
 tak = time.time() - tik
 
 print(tak)
+
+import matplotlib.pyplot as plt
+
+plt.plot(x_coords,y_coords, "bo")
+plt.show()
