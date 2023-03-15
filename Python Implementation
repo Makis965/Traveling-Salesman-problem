@@ -2,28 +2,38 @@ import random
 import numpy as np
 import pandas as pan
 
+
 N = 10  # cities number
-P = 50  # permutations amount
+P = 250  # permutations amount
 n = 0.8
 pm = 0.2
 Tmax = 1000
 
-# Creating
-def cost_f(data_frame, tour):
-    cost_sum = 0
-    for j in range(len(tour)):
-        if j < 9:
-            cost_sum = cost_sum + data_frame[tour[j]][tour[j + 1]]
-        else:
-            cost_sum = cost_sum + data_frame[tour[0]][tour[-1]]
-    return cost_sum
+x_coords = [0, 3, 6, 7, 15, 10, 16, 5, 8, 1.5]
+y_coords = [1, 2, 1, 4.5, -1, 2.5, 11, 6, 9, 12]
 
+def Travelsalesman (N,P,n,pm,Tmax, x_coords = [], y_coords = []):
 
-def Travelsalesman (N,P,n,pm,Tmax):
-    random.seed(100)
-    np.random.seed(100)
+    # Costs summary
+    def cost_f(data_frame, tour):
+        cost_sum = 0
+        for j in range(len(tour)):
+            if j < 9:
+                cost_sum = cost_sum + data_frame[tour[j]][tour[j + 1]]
+            else:
+                cost_sum = cost_sum + data_frame[tour[0]][tour[-1]]
+        return cost_sum
 
+    if len(x_coords) == 0 or len(y_coords) == 0:
+        # random.seed(100)
+        # np.random.seed(100)
+        x_coords = np.random.rand(1, 10)
+        y_coords = np.random.rand(1, 10)
+        coords = np.concatenate((x_coords, y_coords))
+    else:
+        coords = np.concatenate(([x_coords], [y_coords]))
 
+    print("koordy :", coords)
     # # #create population of P chromosomes => population of possible pi tours.
 
     cities = list(np.arange(0, N, 1))
@@ -34,12 +44,6 @@ def Travelsalesman (N,P,n,pm,Tmax):
         population.append(tour)
 
     # # # define diagonal identity matrix: distances between each individual (chromosomes)
-
-    # define coordinates x and y for each city - ZMIENIĆ NA TE OD CZABANA
-
-    x_coords = np.random.rand(1, 10)
-    y_coords = np.random.rand(1, 10)
-    coords = np.concatenate((x_coords, y_coords))  # merge coords
 
     # define distances matrix
 
@@ -52,7 +56,14 @@ def Travelsalesman (N,P,n,pm,Tmax):
     distance_matrix = pan.DataFrame(distance_matrix)
 
     # # # define selection operator
+
     for i in range(Tmax):
+
+        # if i > 0:
+        #     population = population
+        # else:
+        #     population = fresh_population_sorted
+
         list_of_costs = []
 
         for P_index in range(P):
@@ -62,11 +73,11 @@ def Travelsalesman (N,P,n,pm,Tmax):
         t_i = m_f - list_of_costs
         t_s = sum(m_f - list_of_costs)
 
-        element = 0
-        choosed_parents = []
+        # # # parents selection
+
         choosed_parents_pi = []
         parents = int(n*P)
-        for r in range(parents):
+        for _ in range(parents):
             r_value = random.uniform(0, t_s)
             ti_sum = 0
             for i in range(len(t_i)):
@@ -129,17 +140,23 @@ def Travelsalesman (N,P,n,pm,Tmax):
         # # selecting new population
         fresh_pool = population + mutated_offsprings_generation
         fresh_cost = []
+
         for el in range(len(fresh_pool)):
             fresh_cost.append(cost_f(distance_matrix, fresh_pool[el]))
 
         fresh_population = pan.DataFrame(zip(fresh_pool, fresh_cost))
-        fresh_population = fresh_population.sort_values(by=1).head(P)
+        fresh_population_sorted = fresh_population.sort_values(by=1).head(P)
+        population = pan.Series.tolist(population_non[fresh_population_sorted.columns[0]])
 
-    return fresh_population[0].iat[0]
+
+
+
+    return [list(fresh_population[0].iat[0]), population, fresh_population]
 
 import time
 tik = time.time()
-best_tour = Travelsalesman(N,P,n,pm,Tmax)
+best_tour, population_sorted, population_non = Travelsalesman(N,P,n,pm,Tmax, x_coords, y_coords)
+# best_tour = Travelsalesman(N,P,n,pm,Tmax)
 tak = time.time() - tik
 
 print(tak)
