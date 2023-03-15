@@ -36,8 +36,7 @@ def Travelsalesman (N,P,n,pm,Tmax, x_coords = [], y_coords = []):
         coords = np.concatenate((x_coords, y_coords))
     else:
         coords = np.concatenate(([x_coords], [y_coords]))
-    # coords = np.concatenate(([x_coords], [y_coords]))
-    print("koordy :", coords)
+
     # # #create population of P chromosomes => population of possible pi tours.
 
     cities = list(np.arange(0, N, 1))
@@ -113,7 +112,6 @@ def Travelsalesman (N,P,n,pm,Tmax, x_coords = [], y_coords = []):
 
         # generate offsprings for each ancestor's pair
 
-        # offsprings_generation = np.array([])
         offsprings_generation = []
 
         for pair in range(0, (len(choosed_parents_pi)), 2):
@@ -121,13 +119,9 @@ def Travelsalesman (N,P,n,pm,Tmax, x_coords = [], y_coords = []):
             A2 = choosed_parents_pi[pair + 1]
             O1 = crossover_f(A1, A2, 10)
             O2 = crossover_f(A2, A1, 10)
-            # np.append(offsprings_generation, O1)
-            # np.append(offsprings_generation, O1)
-            # offsprings_generation = np.append([[offsprings_generation]], [[O1], [O2]])
-            # offsprings_generation = np.reshape(offsprings_generation, (200,10))
-            # offsprings_generation = [O1, O2]
             offsprings_generation.append(O1)
             offsprings_generation.append(O2)
+
         # # # mutation operator
 
         mutated_offsprings_generation = []
@@ -142,7 +136,7 @@ def Travelsalesman (N,P,n,pm,Tmax, x_coords = [], y_coords = []):
             else:
                 mutated_offsprings_generation.append(offspr)
 
-        # # selecting new population
+        # # # defining new population
 
         fresh_pool = population + mutated_offsprings_generation
         fresh_cost = []
@@ -150,6 +144,7 @@ def Travelsalesman (N,P,n,pm,Tmax, x_coords = [], y_coords = []):
         for el in range(len(fresh_pool)):
             fresh_cost.append(cost_f(distance_matrix, fresh_pool[el]))
 
+        # # # selecting new N individuals to population 
 
         fresh_population = pan.DataFrame(zip(fresh_pool, fresh_cost))
         fresh_population_sorted = fresh_population.sort_values(by=1).head(P)
