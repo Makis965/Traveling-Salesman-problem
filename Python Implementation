@@ -58,7 +58,7 @@ distance_matrix = pan.DataFrame(distance_matrix)
 # # # define selection operator
 
 for i in range(Tmax):
-
+    cost_sum = 0
     # if i > 0:
     #     population = population
     # else:
@@ -91,29 +91,29 @@ for i in range(Tmax):
     # define crossover function
 
     def crossover_f(A1, A2, N):
-        O1 = np.empty(N)
-        O1[:] = np.NaN
+        O1 = [N+1]*N
         for i in range(N):
             if i == 0:
                 O1[0] = A1[0]
                 indexA2 = A2.index(A1[0])
-                O1[indexA2] = int(A1[indexA2])
+                O1[indexA2] = A1[indexA2]
             else:
                 indexA2 = A2.index(A1[indexA2])
-                if np.isnan(O1[indexA2]):
-                    O1[indexA2] = int(A1[indexA2])
+                if O1[indexA2] > N:
+                    O1[indexA2] = A1[indexA2]
                 else:
                     break
 
         for id in range(N):
-            if np.isnan(O1[id]):
+            if O1[id] > N:
                 O1[id] = A2[id]
 
         return O1
 
     # generate offsprings for each ancestor's pair
 
-    offsprings_generation = np.array([])
+    # offsprings_generation = np.array([])
+    offsprings_generation = []
 
     for pair in range(0,(len(choosed_parents_pi)), 2):
         A1 = choosed_parents_pi[pair]
@@ -122,8 +122,9 @@ for i in range(Tmax):
         O2 = crossover_f(A2,A1,10)
         # np.append(offsprings_generation, O1)
         # np.append(offsprings_generation, O1)
-        offsprings_generation = np.append([[offsprings_generation]], [[O1], [O2]])
-    offsprings_generation = np.reshape(offsprings_generation, (200,10))
+        # offsprings_generation = np.append([[offsprings_generation]], [[O1], [O2]])
+    # offsprings_generation = np.reshape(offsprings_generation, (200,10))
+        offsprings_generation = [O1,O2]
     # # # mutation operator
 
     mutated_offsprings_generation = []
@@ -150,7 +151,8 @@ for i in range(Tmax):
     fresh_population_sorted = fresh_population.sort_values(by=1).head(P)
     fresh_population_sorted = fresh_population_sorted.iloc[:, 0].to_list()
     fresh_population_sorted = [list(l) for l in fresh_population_sorted]
-    # N+1 zamiast nan!!!
+    
+        # N+1 zamiast nan!!! - gotowe
     # population = copy.copy(fresh_population_sorted)
 # return [list(fresh_population[0].iat[0]), population, fresh_population]
 
@@ -161,3 +163,5 @@ tik = time.time()
 tak = time.time() - tik
 
 print(tak)
+
+# [list(l) for l in new2]
