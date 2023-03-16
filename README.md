@@ -2,7 +2,7 @@
 
 Basia jest całkiem okej np. ma fajne gadanie i inne 
 
-Hejka! Kod jest skończony i chyba działa; generuje te same ścieżki po 1k iteracji. Teraz trzeba tylko zrobić grafy!!! 
+Hejka! Kod jest skończony i chyba działa; generuje te same ścieżki po 1k iteracji. Teraz trzeba tylko zrobić grafy!!! Wstępnie tylko miejskie kropy generują :(
 
 https://www.geeksforgeeks.org/graph-plotting-in-python-set-1/
 
