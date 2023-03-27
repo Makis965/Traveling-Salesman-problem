@@ -1,3 +1,4 @@
+import math
 import random
 import numpy as np
 import pandas as pan
@@ -5,14 +6,15 @@ import copy
 import time
 
 tik = time.time()
+
 N = 10  # cities number
-P = 250  # permutations amount
+P = 250 # permutations amount
 n = 0.8
 pm = 0.2
 Tmax = 1000
 
-# x_coords = [0, 3, 6, 7, 15, 10, 16, 5, 8, 1.5]
-# y_coords = [1, 2, 1, 4.5, -1, 2.5, 11, 6, 9, 12]
+x_coords = [0, 3, 6, 7, 15, 10, 16, 5, 8, 1.5]
+y_coords = [1, 2, 1, 4.5, -1, 2.5, 11, 6, 9, 12]
 
 
 def Travelsalesman (N,P,n,pm,Tmax, x_coords = [], y_coords = []):
@@ -40,7 +42,7 @@ def Travelsalesman (N,P,n,pm,Tmax, x_coords = [], y_coords = []):
     # # #create population of P chromosomes => population of possible pi tours.
 
     cities = list(np.arange(0, N, 1))
-    population = list()
+    population = []
 
     for i in range(P):
         tour = random.sample(cities, N)
@@ -54,7 +56,7 @@ def Travelsalesman (N,P,n,pm,Tmax, x_coords = [], y_coords = []):
 
     for i in range(10):
         for k in range(10):
-            distance_matrix[i, k] = (coords[0, i] - coords[0, k]) ** 2 + (coords[1, i] - coords[1, k]) ** 2
+            distance_matrix[i, k] = math.sqrt((coords[0, i] - coords[0, k]) ** 2 + (coords[1, i] - coords[1, k]) ** 2)
 
     distance_matrix = pan.DataFrame(distance_matrix)
 
@@ -154,16 +156,39 @@ def Travelsalesman (N,P,n,pm,Tmax, x_coords = [], y_coords = []):
 
     optim_tour = fresh_population_sorted[0]
 
+
+    tak = time.time() - tik
+
+    print(tak)
+
+
+    import matplotlib.pyplot as plt
+
+
+    plt.plot(x_coords, y_coords, "bo")
+
+    for i in range(N):
+        for k in range(1,N):
+            plt.plot((x_coords[i],x_coords[k]),(y_coords[i],y_coords[k]), "gray", alpha = 0.1)
+
+    new_cords_x = []
+    new_cords_y = []
+    for id in optim_tour:
+        new_cords_x.append(x_coords[id])
+        new_cords_y.append(y_coords[id])
+    new_cords_x.append(new_cords_x[0])
+    new_cords_y.append(new_cords_y[0])
+    plt.plot(new_cords_x,new_cords_y)
+
+
+    plt.show()
+
+
+
     return [optim_tour]
 
 
-best_tour  = Travelsalesman(N,P,n,pm,Tmax)
+best_tour  = Travelsalesman(N,P,n,pm,Tmax, x_coords, y_coords)
 
-tak = time.time() - tik
 
-print(tak)
 
-# import matplotlib.pyplot as plt
-#
-# plt.plot(x_coords,y_coords, "bo")
-# plt.show()
