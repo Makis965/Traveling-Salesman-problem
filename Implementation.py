@@ -5,8 +5,6 @@ import pandas as pan
 import copy
 import time
 
-tik = time.time()
-
 N = 10  # cities number
 P = 250 # permutations amount
 n = 0.8
@@ -86,7 +84,6 @@ def Travelsalesman (N,P,n,pm,Tmax, x_coords = [], y_coords = []):
                     choosed_parents_pi.append(population[i])
                     break
 
-
         # # # Crossover operation:
 
         # define crossover function
@@ -110,7 +107,6 @@ def Travelsalesman (N,P,n,pm,Tmax, x_coords = [], y_coords = []):
                     O1[id] = A2[id]
 
             return O1
-
 
         # generate offsprings for each ancestor's pair
 
@@ -155,12 +151,6 @@ def Travelsalesman (N,P,n,pm,Tmax, x_coords = [], y_coords = []):
         population = copy.deepcopy(fresh_population_sorted)
 
     optim_tour = fresh_population_sorted[0]
-
-
-    tak = time.time() - tik
-
-    print(tak)
-
 
     import matplotlib.pyplot as plt
 
